@@ -1,0 +1,14 @@
+version: '3'
+vars:
+    NAME: "toggle"
+    DOCKER_TAG: "toggle/server:dev"
+    BIN_DIR: "./bin"
+tasks:
+    build:
+        desc: Build the Toggle API server and CLI client
+        cmds:
+        - go build -o {{.BIN_DIR}}/{{.NAME}} {{.CLI_ARGS}} main.go
+    run:
+        desc: Run Toggle from source
+        cmds:
+        - go run main.go {{.CLI_ARGS}}
