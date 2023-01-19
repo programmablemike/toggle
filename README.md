@@ -66,9 +66,9 @@ Toggle allows the operator to define their own scoping strategy in order to serv
 
 Common scoping strategies supported include:
 
--   Scoping by the environment (eg. development, staging, production) that the flag applies to.
--   Scoping by tenant (eg. customer_a, customer_b, customer_c)
--   Scoping by feature (eg. login, website, billing, etc.)
+-   Scoping by the environment (eg. `development`, `staging`, `production`) that the flag applies to.
+-   Scoping by tenant (eg. `customer_a`, `customer_b`, `customer_c`)
+-   Scoping by mode (eg. `enterprise`, `experimental`, etc.)
 
 ### create a new feature flag
 
