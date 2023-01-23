@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package toggle.v1;
 
-option go_package = "toggle/gen/go/toggle/v1;togglev1";
+option go_package = "github.com/programmablemike/toggle/gen/go/toggle/v1;togglev1";
 
 service ToggleService {
     rpc CreateScope(CreateScopeRequest) returns (CreateScopeResponse) {}

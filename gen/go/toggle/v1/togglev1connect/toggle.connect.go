@@ -8,9 +8,9 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
+	v1 "github.com/programmablemike/toggle/gen/go/toggle/v1"
 	http "net/http"
 	strings "strings"
-	v1 "toggle/gen/go/toggle/v1"
 )
 
 // This is a compile-time assertion to ensure that this generated file and the connect package are

@@ -13,30 +13,38 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+func CreateToggleClient() togglev1connect.ToggleServiceClient {
+	return togglev1connect.NewToggleServiceClient(
+		http.DefaultClient,
+		"http://localhost:8080",
+	)
+}
+
 func NewClientCommand() *cli.Command {
 	return &cli.Command{
 		Name:    "client",
 		Aliases: []string{"c"},
 		Usage:   "Client for interacting with the API server",
-		Action: func(cCtx *cli.Context) error {
-			log.Info().Msg("Running client")
+		Subcommands: []*cli.Command{
+			{
+				Name:  "create-scope",
+				Usage: "Create a new scope",
+				Action: func(cCtx *cli.Context) error {
+					log.Info().Msg("Calling `create scope`")
 
-			client := togglev1connect.NewToggleServiceClient(
-				http.DefaultClient,
-				"http://localhost:8081",
-			)
-
-			res, err := client.CreateScope(
-				context.Background(),
-				connect.NewRequest(&togglev1.CreateScopeRequest{}),
-			)
-			if err != nil {
-				log.Error().Err(err)
-				return err
-			}
-			log.Info(res)
-
-			return nil
+					client := CreateToggleClient()
+					_, err := client.CreateScope(
+						context.Background(),
+						connect.NewRequest(&togglev1.CreateScopeRequest{}),
+					)
+					if err != nil {
+						log.Error().Err(err)
+						return err
+					}
+					log.Info().Msg("Received response")
+					return nil
+				},
+			},
 		},
 	}
 }
