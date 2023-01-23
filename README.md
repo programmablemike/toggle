@@ -75,3 +75,12 @@ Common scoping strategies supported include:
 ### assign a value to the flag
 
 ### list all flags
+
+## features to support
+
+-   [ ] Setting and getting scope
+-   [ ] Creating and updating toggle sets and toggles
+-   [ ] Leader election and multiple instances of API server
+-   [ ] Toggle local caching and performance improvements
+-   [ ] Kubernetes deployment manifests
+-   [ ] Toggle API CRDs and Kubernetes operator
