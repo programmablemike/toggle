@@ -2,12 +2,21 @@ version: '3'
 vars:
     NAME: "toggle"
     DOCKER_TAG: "toggle/server:dev"
+    GEN_DIR: "./internal/api"
     BIN_DIR: "./bin"
 tasks:
+    setup:
+        desc: Install tools needed to develop Toggle
+        cmds:
+        - go install github.com/bufbuild/buf/cmd/buf@latest
+        - go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+        - go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+        - go install github.com/bufbuild/connect-go/cmd/protoc-gen-connect-go@latest
     build:
         desc: Build the Toggle API server and CLI client
         cmds:
-        - go build -o {{.BIN_DIR}}/{{.NAME}} {{.CLI_ARGS}} main.go
+        - buf generate  # creates the RPC stubs and protobuf
+        - go build -o {{.BIN_DIR}}/{{.NAME}} {{.CLI_ARGS}} main.go  # compile the code
     run:
         desc: Run Toggle from source
         cmds:

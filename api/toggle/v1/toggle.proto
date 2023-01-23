@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package toggle.v1;
+
+option go_package = "toggle/gen/go/toggle/v1;togglev1";
+
+service ToggleService {
+    rpc CreateScope(CreateScopeRequest) returns (CreateScopeResponse) {}
+}
+
+// General use types
+message Scope {
+    string scope_id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+// CreateScope
+message CreateScopeRequest {}
+message CreateScopeResponse {}
