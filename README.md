@@ -20,6 +20,17 @@ To install: `go install github.com/go-task/task/v3/cmd/task@latest`
 
 After installing you can list the available tasks: `task --list`
 
+```bash
+❯ task --list
+task: Available tasks for this project:
+* build:              Build the Toggle API server and CLI client
+* build-docker:       Generate the docker image
+* generate:           Generate connect-go/gRPC integration code
+* run:                Run Toggle from source
+* run-docker:         Run Toggle from the Docker image
+* setup:              Install tools needed to develop Toggle
+```
+
 ### setup
 
 To install the Go binaries necessary for development, install Taskfile and then run: `task setup`
