@@ -10,6 +10,22 @@ Pull requests welcomed. ❤️
 
 MIT licensed. See [licenses](./licenses) for more details.
 
+## setup
+
+This project uses [Taskfile](https://taskfile.dev) to manage build steps.
+
+To install the Go binaries necessary for development, install Taskfile and then run: `task setup`
+
+## building the Docker image
+
+To build the Docker image for the Toggle API server locally run: `task build-docker`
+
+To run the image there's a convenience function: `task run-docker`
+
+An example of how to connect to the newly created server: `task run -- client create-scope`
+
+##
+
 ## design
 
 ### overview
