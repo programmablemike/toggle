@@ -2,6 +2,7 @@ version: '3'
 vars:
     NAME: "toggle"
     DOCKER_TAG: "toggle/server:dev"
+    DOCKER_NAME: "toggle-api"
     GEN_DIR: "./internal/api"
     BIN_DIR: "./bin"
 tasks:
@@ -21,11 +22,18 @@ tasks:
         generates:
         - gen/go/**/*.go
     build:
-        deps: [generate]
         desc: Build the Toggle API server and CLI client
         cmds:
         - go build -o {{.BIN_DIR}}/{{.NAME}} {{.CLI_ARGS}} main.go  # compile the code
+    build-docker:
+        desc: Generate the docker image
+        cmds:
+        - docker build --tag {{.DOCKER_TAG}} -f Dockerfile {{.CLI_ARGS}} .
     run:
         desc: Run Toggle from source
         cmds:
         - go run main.go {{.CLI_ARGS}}
+    run-docker:
+        desc: Run Toggle from the Docker image
+        cmds:
+        - docker run -it --rm -p 8080:8080 --name {{.DOCKER_NAME}} {{.CLI_ARGS}} {{.DOCKER_TAG}}

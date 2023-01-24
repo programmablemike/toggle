@@ -45,7 +45,7 @@ func NewServerCommand() *cli.Command {
 			mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 			mux.Handle(path, handler)
 			http.ListenAndServe(
-				"localhost:8080",
+				"0.0.0.0:8080", // WARNING(mlee): This is insecure and only suitable for testing
 				h2c.NewHandler(mux, &http2.Server{}),
 			)
 			return nil

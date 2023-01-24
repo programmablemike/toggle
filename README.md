@@ -78,6 +78,7 @@ Common scoping strategies supported include:
 
 ## features to support
 
+-   [ ] Docker image creation and publishing
 -   [ ] Setting and getting scope
 -   [ ] Creating and updating toggle sets and toggles
 -   [ ] Leader election and multiple instances of API server
