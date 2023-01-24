@@ -12,9 +12,15 @@ MIT licensed. See [licenses](./licenses) for more details.
 
 ## development
 
-### setup
+### taskfile
 
 This project uses [Taskfile](https://taskfile.dev) to manage build steps.
+
+To install: `go install github.com/go-task/task/v3/cmd/task@latest`
+
+After installing you can list the available tasks: `task --list`
+
+### setup
 
 To install the Go binaries necessary for development, install Taskfile and then run: `task setup`
 
