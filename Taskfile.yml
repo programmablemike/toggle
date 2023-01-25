@@ -21,7 +21,12 @@ tasks:
         - api/toggle/**/*.proto
         generates:
         - gen/go/**/*.go
+    test:
+        desc: Run the test suite
+        cmds:
+        - go test {{.CLI_ARGS}} ./...
     build:
+        deps: [generate]
         desc: Build the Toggle API server and CLI client
         cmds:
         - go build -o {{.BIN_DIR}}/{{.NAME}} {{.CLI_ARGS}} main.go  # compile the code

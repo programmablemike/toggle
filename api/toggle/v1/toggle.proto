@@ -9,10 +9,37 @@ service ToggleService {
 }
 
 // General use types
+enum ToggleValue {
+    TOGGLE_OFF = 0;
+    TOGGLE_ON = 1;
+}
+
+message ScopeSet {
+    string id = 1;
+    string toggle_set_id = 2; // Foreign key ID for Toggle Set
+    repeated Scope scopes = 3;
+}
+
 message Scope {
-    string scope_id = 1;
+    string id = 1;
     string name = 2;
-    string description = 3;
+    optional string description = 3;
+    bool required = 4;
+    repeated string acceptable_values = 5;
+}
+
+message ToggleSet {
+    string id = 1;
+    string scope_set_id = 2; // Foreign key ID for Scope Set
+    repeated Toggle toggles = 3;
+}
+
+message Toggle {
+    string id = 1;
+    string name = 2;
+    optional string description = 3;
+    ToggleValue value = 4;
+    ToggleValue default_value = 5;
 }
 
 // CreateScope

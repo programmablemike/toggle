@@ -49,11 +49,33 @@ An example of how to connect to the newly created server: `task run -- client cr
 
 The name _Toggle_ was chosen because it provides a semi-opinionated method for managing feature flags. Current home-rolled feature flag systems often end up with a murky binary enable/disable pattern for features that can lead to confusion. ("What does it mean to enable the `DisableFeatureX` flag?")
 
-Toggle tries to side step this issue by having an opinion; things are _toggled_ (think "light switch") to be either _on_ or _off_. This leads to shorter feature names (`FeatureX` instead of `EnableFeatureX`) with a cleaner understanding of what toggling it on means ("`FeatureX` is enabled"). This however necessitates that any behavior to be toggled must be described in terms of being on or off.
+Toggle tries to side step this issue by having an opinion; feature flags are called `Toggles` and are _toggled_ (think "light switch") to be either _on_ or _off_. This leads to shorter feature names (`FeatureX` instead of `EnableFeatureX`) with a cleaner understanding of what toggling it on means ("`FeatureX` is enabled"). This however necessitates that any behavior to be toggled must be described in terms of being on or off.
 
 One design consideration is that toggle is for _feature flagging and is not a general configuration management tool_. It does not support switches for non-boolean values (eg. `ApiTimeoutInSeconds`) and is unlikely to in the future. For these cases a general purpose configuration tool should be used instead. Ignoring non-binary use cases allows Toggle to be very performant even in high-traffic environments that may make thousands of lookups per second.
 
-### toggle sets
+### data structures
+
+```mermaid
+erDiagram
+    ToggleSet {
+        string id
+        string scope_set_id FK
+
+    }
+    ScopeSet {
+        string id
+        string toggle_set_id FK
+    }
+    Toggle {
+        string id
+    }
+    Scope {
+        string id
+    }
+    ToggleSet ||--|| ScopeSet : matches
+    ScopeSet ||--|{ Scope : contains
+    ToggleSet ||--|{ Toggle : contains
+```
 
 A _toggle set_ is a collection of multiple feature _toggles_ that are logically grouped and allows for turning them all on or off as a single switch.
 
@@ -61,7 +83,48 @@ An example use case would be the ability to toggle on a complete set of features
 
 Imagine the scenario where sales is attempting to upsell a new customer by providing a preview of the features available to them at an enterprise tier. In this case it would be appropriate to toggle (on a per tenant basis) the feature set for enterprise.
 
-### default values
+### scoping
+
+Scoping is the process of identifying which `Toggle` values should be applied to the
+incoming request.
+
+Scope is identified by a `ScopeSet` which is a collection of `Scope` attributes that can be used to refine granularity. For example, a `ScopeSet` might contain two `Scope` attributes; one for "environment" and one for "customer". Using this type of `ScopeSet` would allow you to set different toggles for each customer and provides a convenient strategy for rolling out new features on a per customer basis.
+
+`Scope` attributes can be either _required_ or _optional_ (the default). A required `Scope` must be passed with every lookup request; not passing it will result in an error. An optional `Scope` will receive a default value if omitted. Required `Scopes` are useful when you want to make sure not to accidentally fall back to an invalid default value. For example, for an "environment" `Scope` you would not want to accidentally default to "test" for all environments.
+
+An optional `Scope` will receive a default value if omitted. Optional `Scopes` are useful for when you will only be customizing the `Toggle` values for specific cases, but are OK with using a sensible default value for all other cases. For example, for a "customer" `Scope` you may want to have a default profile for all customers that you only customize for individual customers on request.
+
+Each `Scope` is defined along with a finite set of acceptable values for that `Scope`. We do this for performance reasons; having too much scope cardinality can lead to poor memory utilization patterns and slow lookups leading to high request latency. In the future we may re-evaluate these limits to the Toggle API based on real-world usage.
+
+`ScopeSet` limits:
+
+| Name               | Limit          |
+| ------------------ | -------------- |
+| Scope values       | 1000 values    |
+| Scope value length | 255 characters |
+| Number of scopes   | 5 scopes       |
+
+### toggling
+
+Toggling is the underlying reason for this service. A `ToggleSet` is a related group of feature `Toggles` that can be turned off or on as a group or individually.
+
+```mermaid
+graph TD
+    ScopeSet --> Scope1[Scope] & Scope2[Scope]
+    Scope1 --> ScopeValue1[Scope Value] & ScopeValue2[Scope Value]
+    Scope2 --> * & ScopeValue3[Scope Value] & ScopeValue4[Scope Value] & ScopeValue5[Scope Value] & ScopeValue6[Scope Value] & ScopeValue7[Scope Value]
+```
+
+```mermaid
+graph TD
+    PerCustomer --> environment & customer
+    environment --> dev & test & staging & production
+    customer --> * & Acme & Globex & Initech & Umbrella & Hooli
+```
+
+Each `ToggleSet` is bound to a `ScopeSet` that defines the granularity allowed for customizing the `ToggleSet` and `Toggle` values. This relationship provides an efficient way to lookup the relevant `Toggles` for an incoming Toggle API request.
+
+### use of default values
 
 It is _highly_ recommended that a toggle and toggle sets default value is set to `OFF`. This is because gRPC does not bother to encode and send a field whose value matches its default value; the field is not transmitted on the wire and is instead only populated (inflated) during the decoding phase using the defined protobuf schema. This means there is a substantial savings on both network transfer latency and the message encoding/decoding for requests that are primarily sending or receiving default values.
 

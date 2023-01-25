@@ -22,7 +22,7 @@ type ToggleServer struct{}
 
 // CreateScope adds a new scope to partition the toggles
 func (ts *ToggleServer) CreateScope(ctx context.Context, req *connect.Request[togglev1.CreateScopeRequest]) (*connect.Response[togglev1.CreateScopeResponse], error) {
-	log.Info().Msgf("Request headers: ", req.Header())
+	log.Info().Msgf("Request headers: %v", req.Header())
 	res := connect.NewResponse(&togglev1.CreateScopeResponse{})
 	return res, nil
 }

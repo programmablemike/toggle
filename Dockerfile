@@ -3,6 +3,7 @@ WORKDIR /usr/local/src/toggle
 COPY . .
 # Install Taskfile to reuse build commands
 RUN go install github.com/go-task/task/v3/cmd/task@latest
+RUN task setup
 RUN task build
 
 # NOTE(mlee): We want to use `scratch` as the base image, but there was an issue
