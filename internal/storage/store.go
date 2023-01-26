@@ -1,3 +1,5 @@
+// Naive generic storage for basic functionality
+// TODO(mlee): Replace this with real, go-routine safe storage. Preferably something with an external datastore that can be persisted to disk
 package storage
 
 // DataStore is a generic in-memory store for protobuf messages
