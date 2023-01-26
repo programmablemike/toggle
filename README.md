@@ -122,7 +122,7 @@ graph TD
     customer --> *[default] & Acme & Globex & Initech & Umbrella & Hooli
 ```
 
-Each `ToggleSet` is bound to a `ScopeSet` that defines the granularity allowed for customizing the `ToggleSet` and `Toggle` values. This relationship provides an efficient way to lookup the relevant `Toggles` for an incoming Toggle API request.
+Each `ToggleSet` is bound to a `ScopeSet` that defines the granularity allowed for customizing the `ToggleSet` and `Toggle` values. This relationship provides an efficient way to lookup the relevant `ToggleSets` and `Toggles` for an incoming Toggle API request.
 
 ### use of default values
 
