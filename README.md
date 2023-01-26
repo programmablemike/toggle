@@ -112,21 +112,21 @@ Toggling is the underlying reason for this service. A `ToggleSet` is a related g
 graph TD
     ScopeSet --> Scope1[Scope] & Scope2[Scope]
     Scope1 --> ScopeValue1[Scope Value] & ScopeValue2[Scope Value]
-    Scope2 --> * & ScopeValue3[Scope Value] & ScopeValue4[Scope Value] & ScopeValue5[Scope Value] & ScopeValue6[Scope Value] & ScopeValue7[Scope Value]
+    Scope2 --> *[default] & ScopeValue3[Scope Value] & ScopeValue4[Scope Value] & ScopeValue5[Scope Value] & ScopeValue6[Scope Value] & ScopeValue7[Scope Value]
 ```
 
 ```mermaid
 graph TD
     PerCustomer --> environment & customer
     environment --> dev & test & staging & production
-    customer --> * & Acme & Globex & Initech & Umbrella & Hooli
+    customer --> *[default] & Acme & Globex & Initech & Umbrella & Hooli
 ```
 
 Each `ToggleSet` is bound to a `ScopeSet` that defines the granularity allowed for customizing the `ToggleSet` and `Toggle` values. This relationship provides an efficient way to lookup the relevant `Toggles` for an incoming Toggle API request.
 
 ### use of default values
 
-It is _highly_ recommended that a toggle and toggle sets default value is set to `OFF`. This is because gRPC does not bother to encode and send a field whose value matches its default value; the field is not transmitted on the wire and is instead only populated (inflated) during the decoding phase using the defined protobuf schema. This means there is a substantial savings on both network transfer latency and the message encoding/decoding for requests that are primarily sending or receiving default values.
+It is _highly_ recommended that a toggle and toggle sets default value is set to `TOGGLE_OFF`. This is because gRPC does not bother to encode and send a field whose value matches its default value; the field is not transmitted on the wire and is instead only populated (inflated) during the decoding phase using the defined protobuf schema. This means there is a substantial savings on both network transfer latency and the message encoding/decoding for requests that are primarily sending or receiving default values.
 
 For example, suppose you have the following toggle set:
 
