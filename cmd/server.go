@@ -3,9 +3,11 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/bufbuild/connect-go"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
@@ -22,18 +24,18 @@ type ToggleServer struct{}
 
 // CreateScopeSet adds a new scope set for grouping related scopes
 func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request[togglev1.CreateScopeSetRequest]) (*connect.Response[togglev1.CreateScopeSetResponse], error) {
-	log.Info().Msgf("Request headers: %v", req.Header())
+	log.Info().Msgf("Received request: %v", req)
 	res := connect.NewResponse(&togglev1.CreateScopeSetResponse{
-		Info: &togglev1.MessageInfo{Id: "myid"},
+		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 	})
 	return res, nil
 }
 
 // CreateScope adds a new scope to partition the toggles
 func (ts *ToggleServer) CreateScope(ctx context.Context, req *connect.Request[togglev1.CreateScopeRequest]) (*connect.Response[togglev1.CreateScopeResponse], error) {
-	log.Info().Msgf("Request headers: %v", req.Header())
+	log.Info().Msgf("Received request: %v", req)
 	res := connect.NewResponse(&togglev1.CreateScopeResponse{
-		Info: &togglev1.MessageInfo{Id: "myid"},
+		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 	})
 	return res, nil
 }
