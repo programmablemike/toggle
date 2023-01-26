@@ -59,9 +59,11 @@ message MessageInfo {
 //
 message CreateScopeSetRequest {
     MessageInfo info = 1;
+    ScopeSet value = 2;
 }
 message CreateScopeSetResponse {
     MessageInfo info = 1;
+    ScopeSet value = 2;
 }
 
 //
@@ -69,10 +71,12 @@ message CreateScopeSetResponse {
 //
 message CreateScopeRequest {
     MessageInfo info = 1;
+    Scope value = 2;
 }
 
 message CreateScopeResponse {
     MessageInfo info = 1;
+    Scope value = 2;
 }
 
 //

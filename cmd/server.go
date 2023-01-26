@@ -13,6 +13,7 @@ import (
 
 	togglev1 "github.com/programmablemike/toggle/gen/go/toggle/v1"
 	"github.com/programmablemike/toggle/gen/go/toggle/v1/togglev1connect"
+	"github.com/programmablemike/toggle/internal/storage"
 
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
@@ -20,11 +21,21 @@ import (
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 )
 
-type ToggleServer struct{}
+type ToggleStorage struct {
+	toggleset *storage.DataStore[togglev1.ToggleSet]
+	toggle    *storage.DataStore[togglev1.Toggle]
+	scopeset  *storage.DataStore[togglev1.ScopeSet]
+	scope     *storage.DataStore[togglev1.Scope]
+}
+
+type ToggleServer struct {
+	store ToggleStorage
+}
 
 // CreateScopeSet adds a new scope set for grouping related scopes
 func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request[togglev1.CreateScopeSetRequest]) (*connect.Response[togglev1.CreateScopeSetResponse], error) {
 	log.Info().Msgf("Received request: %v", req)
+	ts.store.scopeset.Add(*req.Msg.Value)
 	res := connect.NewResponse(&togglev1.CreateScopeSetResponse{
 		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 	})
@@ -34,6 +45,7 @@ func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request
 // CreateScope adds a new scope to partition the toggles
 func (ts *ToggleServer) CreateScope(ctx context.Context, req *connect.Request[togglev1.CreateScopeRequest]) (*connect.Response[togglev1.CreateScopeResponse], error) {
 	log.Info().Msgf("Received request: %v", req)
+	ts.store.scope.Add(*req.Msg.Value)
 	res := connect.NewResponse(&togglev1.CreateScopeResponse{
 		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 	})
