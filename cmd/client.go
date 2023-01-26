@@ -38,7 +38,7 @@ func NewClientCommand() *cli.Command {
 				Name:  "create-scope-set",
 				Usage: "Create a new scope set",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("Calling `create scope set`")
+					log.Info().Msg("Calling `CreateScopeSets`")
 
 					client := CreateToggleClient(cCtx)
 					res, err := client.CreateScopeSet(
@@ -59,15 +59,38 @@ func NewClientCommand() *cli.Command {
 				},
 			},
 			{
-				Name:  "create-scope",
-				Usage: "Create a new scope",
+				Name:  "list-scope-sets",
+				Usage: "List all available scope sets",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("Calling `create scope`")
+					log.Info().Msg("Calling `ListScopeSets")
 
 					client := CreateToggleClient(cCtx)
-					res, err := client.CreateScope(
+					res, err := client.ListScopeSets(
+						context.Background(), //TODO(mlee): Add a timeout to the context
+						connect.NewRequest(&togglev1.ListScopeSetsRequest{
+							Info: &togglev1.MessageInfo{
+								Id: fmt.Sprintf("%s", uuid.NewV4()),
+							},
+						}),
+					)
+					if err != nil {
+						log.Error().Err(err)
+						return err
+					}
+					log.Info().Msgf("Received response: %v", res)
+					return nil
+				},
+			},
+			{
+				Name:  "list-scopes",
+				Usage: "List all available scopes",
+				Action: func(cCtx *cli.Context) error {
+					log.Info().Msg("Calling `ListScopes`")
+
+					client := CreateToggleClient(cCtx)
+					res, err := client.ListScopes(
 						context.Background(), // TODO(mlee): Add a timeout to the context
-						connect.NewRequest(&togglev1.CreateScopeRequest{
+						connect.NewRequest(&togglev1.ListScopesRequest{
 							Info: &togglev1.MessageInfo{
 								Id: fmt.Sprintf("%s", uuid.NewV4()),
 							},

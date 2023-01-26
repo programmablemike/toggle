@@ -7,7 +7,6 @@ option go_package = "github.com/programmablemike/toggle/gen/go/toggle/v1;togglev
 service ToggleService {
     rpc CreateScopeSet(CreateScopeSetRequest) returns (CreateScopeSetResponse) {}
     rpc ListScopeSets(ListScopeSetsRequest) returns (ListScopeSetsResponse) {}
-    rpc CreateScope(CreateScopeRequest) returns (CreateScopeResponse) {}
     rpc ListScopes(ListScopesRequest) returns (ListScopesResponse) {}
 }
 
@@ -78,19 +77,6 @@ message ListScopeSetsRequest {
 message ListScopeSetsResponse {
     MessageInfo info = 1;
     repeated ScopeSet result = 2;
-}
-
-//
-// CreateScope
-//
-message CreateScopeRequest {
-    MessageInfo info = 1;
-    Scope value = 2;
-}
-
-message CreateScopeResponse {
-    MessageInfo info = 1;
-    Scope value = 2;
 }
 
 //

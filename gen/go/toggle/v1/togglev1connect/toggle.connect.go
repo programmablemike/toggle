@@ -29,7 +29,6 @@ const (
 type ToggleServiceClient interface {
 	CreateScopeSet(context.Context, *connect_go.Request[v1.CreateScopeSetRequest]) (*connect_go.Response[v1.CreateScopeSetResponse], error)
 	ListScopeSets(context.Context, *connect_go.Request[v1.ListScopeSetsRequest]) (*connect_go.Response[v1.ListScopeSetsResponse], error)
-	CreateScope(context.Context, *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error)
 	ListScopes(context.Context, *connect_go.Request[v1.ListScopesRequest]) (*connect_go.Response[v1.ListScopesResponse], error)
 }
 
@@ -53,11 +52,6 @@ func NewToggleServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 			baseURL+"/toggle.v1.ToggleService/ListScopeSets",
 			opts...,
 		),
-		createScope: connect_go.NewClient[v1.CreateScopeRequest, v1.CreateScopeResponse](
-			httpClient,
-			baseURL+"/toggle.v1.ToggleService/CreateScope",
-			opts...,
-		),
 		listScopes: connect_go.NewClient[v1.ListScopesRequest, v1.ListScopesResponse](
 			httpClient,
 			baseURL+"/toggle.v1.ToggleService/ListScopes",
@@ -70,7 +64,6 @@ func NewToggleServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 type toggleServiceClient struct {
 	createScopeSet *connect_go.Client[v1.CreateScopeSetRequest, v1.CreateScopeSetResponse]
 	listScopeSets  *connect_go.Client[v1.ListScopeSetsRequest, v1.ListScopeSetsResponse]
-	createScope    *connect_go.Client[v1.CreateScopeRequest, v1.CreateScopeResponse]
 	listScopes     *connect_go.Client[v1.ListScopesRequest, v1.ListScopesResponse]
 }
 
@@ -84,11 +77,6 @@ func (c *toggleServiceClient) ListScopeSets(ctx context.Context, req *connect_go
 	return c.listScopeSets.CallUnary(ctx, req)
 }
 
-// CreateScope calls toggle.v1.ToggleService.CreateScope.
-func (c *toggleServiceClient) CreateScope(ctx context.Context, req *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error) {
-	return c.createScope.CallUnary(ctx, req)
-}
-
 // ListScopes calls toggle.v1.ToggleService.ListScopes.
 func (c *toggleServiceClient) ListScopes(ctx context.Context, req *connect_go.Request[v1.ListScopesRequest]) (*connect_go.Response[v1.ListScopesResponse], error) {
 	return c.listScopes.CallUnary(ctx, req)
@@ -98,7 +86,6 @@ func (c *toggleServiceClient) ListScopes(ctx context.Context, req *connect_go.Re
 type ToggleServiceHandler interface {
 	CreateScopeSet(context.Context, *connect_go.Request[v1.CreateScopeSetRequest]) (*connect_go.Response[v1.CreateScopeSetResponse], error)
 	ListScopeSets(context.Context, *connect_go.Request[v1.ListScopeSetsRequest]) (*connect_go.Response[v1.ListScopeSetsResponse], error)
-	CreateScope(context.Context, *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error)
 	ListScopes(context.Context, *connect_go.Request[v1.ListScopesRequest]) (*connect_go.Response[v1.ListScopesResponse], error)
 }
 
@@ -119,11 +106,6 @@ func NewToggleServiceHandler(svc ToggleServiceHandler, opts ...connect_go.Handle
 		svc.ListScopeSets,
 		opts...,
 	))
-	mux.Handle("/toggle.v1.ToggleService/CreateScope", connect_go.NewUnaryHandler(
-		"/toggle.v1.ToggleService/CreateScope",
-		svc.CreateScope,
-		opts...,
-	))
 	mux.Handle("/toggle.v1.ToggleService/ListScopes", connect_go.NewUnaryHandler(
 		"/toggle.v1.ToggleService/ListScopes",
 		svc.ListScopes,
@@ -141,10 +123,6 @@ func (UnimplementedToggleServiceHandler) CreateScopeSet(context.Context, *connec
 
 func (UnimplementedToggleServiceHandler) ListScopeSets(context.Context, *connect_go.Request[v1.ListScopeSetsRequest]) (*connect_go.Response[v1.ListScopeSetsResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("toggle.v1.ToggleService.ListScopeSets is not implemented"))
-}
-
-func (UnimplementedToggleServiceHandler) CreateScope(context.Context, *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("toggle.v1.ToggleService.CreateScope is not implemented"))
 }
 
 func (UnimplementedToggleServiceHandler) ListScopes(context.Context, *connect_go.Request[v1.ListScopesRequest]) (*connect_go.Response[v1.ListScopesResponse], error) {

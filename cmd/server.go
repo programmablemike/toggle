@@ -52,16 +52,6 @@ func (ts *ToggleServer) ListScopeSets(ctx context.Context, req *connect.Request[
 	return res, nil
 }
 
-// CreateScope adds a new scope to partition the toggles
-func (ts *ToggleServer) CreateScope(ctx context.Context, req *connect.Request[togglev1.CreateScopeRequest]) (*connect.Response[togglev1.CreateScopeResponse], error) {
-	log.Info().Msgf("Received request: %v", req)
-	ts.store.scope.AddRef(req.Msg.Value)
-	res := connect.NewResponse(&togglev1.CreateScopeResponse{
-		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
-	})
-	return res, nil
-}
-
 func (ts *ToggleServer) ListScopes(ctx context.Context, req *connect.Request[togglev1.ListScopesRequest]) (*connect.Response[togglev1.ListScopesResponse], error) {
 	log.Info().Msgf("Received request: %v", req)
 	scopes := ts.store.scope.ListAsRef()
