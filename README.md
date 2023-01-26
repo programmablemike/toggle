@@ -47,6 +47,29 @@ An example of how to connect to the newly created server: `task run -- client cr
 
 ### overview
 
+```mermaid
+graph LR
+    user(End User)
+    cli[Toggle CLI]
+    kubectl[Kubectl]
+    operator[Toggle Operator]
+    api1[Toggle API - leader]
+    api2[Toggle API - follower]
+    api3[Toggle API - follower]
+    service1[Service A]
+    service2[Service B]
+    db[Postgres]
+    user --> cli
+    user --> kubectl --> operator
+    cli --> api1
+    subgraph Kubernetes cluster
+        operator --> api1
+        service1 --> api2
+        service2 --> api3
+    end
+    api1 & api2 & api3 --> db
+```
+
 The name _Toggle_ was chosen because it provides a semi-opinionated method for managing feature flags. Current home-rolled feature flag systems often end up with a murky binary enable/disable pattern for features that can lead to confusion. ("What does it mean to enable the `DisableFeatureX` flag?")
 
 Toggle tries to side step this issue by having an opinion; feature flags are called `Toggles` and are _toggled_ (think "light switch") to be either _on_ or _off_. This leads to shorter feature names (`FeatureX` instead of `EnableFeatureX`) with a cleaner understanding of what toggling it on means ("`FeatureX` is enabled"). This however necessitates that any behavior to be toggled must be described in terms of being on or off.
