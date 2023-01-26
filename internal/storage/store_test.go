@@ -162,3 +162,8 @@ func TestListAsRef(t *testing.T) {
 	assert.Equal(t, res[0].Value, "not hello world")
 	assert.Equal(t, res2[0].Value, "hello world")
 }
+
+// NOTE(mlee): This is expected to fail
+func TestGoroutineSafeUpdates(t *testing.T) {
+
+}

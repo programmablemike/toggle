@@ -29,7 +29,7 @@ type ToggleStorage struct {
 }
 
 type ToggleServer struct {
-	store ToggleStorage
+	store *ToggleStorage
 }
 
 // CreateScopeSet adds a new scope set for grouping related scopes
@@ -62,6 +62,15 @@ func (ts *ToggleServer) ListScopes(ctx context.Context, req *connect.Request[tog
 	return res, nil
 }
 
+func NewToggleStorage() *ToggleStorage {
+	return &ToggleStorage{
+		toggleset: &storage.DataStore[togglev1.ToggleSet]{},
+		toggle:    &storage.DataStore[togglev1.Toggle]{},
+		scopeset:  &storage.DataStore[togglev1.ScopeSet]{},
+		scope:     &storage.DataStore[togglev1.Scope]{},
+	}
+}
+
 func NewServerCommand() *cli.Command {
 	return &cli.Command{
 		Name:    "server",
@@ -71,7 +80,9 @@ func NewServerCommand() *cli.Command {
 		Action: func(cCtx *cli.Context) error {
 			log.Info().Msg("Running server")
 
-			toggler := &ToggleServer{}
+			toggler := &ToggleServer{
+				store: NewToggleStorage(),
+			}
 			mux := http.NewServeMux()
 			reflector := grpcreflect.NewStaticReflector(
 				"toggle.v1.ToggleService",
