@@ -49,24 +49,29 @@ An example of how to connect to the newly created server: `task run -- client cr
 
 ```mermaid
 graph LR
-    user(End User)
-    cli[Toggle CLI]
-    kubectl[Kubectl]
-    operator[Toggle Operator]
-    api1[Toggle API - leader]
-    api2[Toggle API - follower]
-    api3[Toggle API - follower]
-    service1[Service A]
-    service2[Service B]
-    db[Postgres]
-    user --> cli
-    user --> kubectl --> operator
-    cli --> api1
-    subgraph Kubernetes cluster
-        operator --> api1
-        service1 --> api2
-        service2 --> api3
+    subgraph Admin's Computer
+        user(Toggle Administrator)
+        cli[Toggle CLI]
+        dashboard[Web Dashboard]
+        kubectl[Kubectl]
     end
+    subgraph Kubernetes cluster
+        kubeapi[k8s API]
+        etcd[ETCD]
+        operator[Toggle Operator]
+        service1[Service A]
+        service2[Service B]
+        api1[Toggle API - leader]
+        api2[Toggle API - follower]
+        api3[Toggle API - follower]
+    end
+    subgraph Database cluster
+        db[Postgres]
+    end
+    user --> cli & dashboard --> api1
+    user --> kubectl --> kubeapi --> etcd --> operator --> api1
+    service1 --> api2
+    service2 --> api3
     api1 & api2 & api3 --> db
 ```
 
