@@ -25,6 +25,10 @@ tasks:
         desc: Run the test suite
         cmds:
         - go test {{.CLI_ARGS}} ./...
+    bench:
+        desc: Run the benchmarks
+        cmds:
+        - go test -bench . -count 3 -run ^$ {{.CLI_ARGS}} ./...
     build:
         deps: [generate]
         desc: Build the Toggle API server and CLI client
