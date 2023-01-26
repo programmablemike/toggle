@@ -25,6 +25,7 @@ func NewClientCommand() *cli.Command {
 		Name:    "client",
 		Aliases: []string{"c"},
 		Usage:   "Client for interacting with the API server",
+		Flags:   []cli.Flag{},
 		Subcommands: []*cli.Command{
 			{
 				Name:  "create-scope",

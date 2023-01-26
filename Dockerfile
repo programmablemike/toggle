@@ -12,4 +12,4 @@ RUN task build
 FROM alpine:3.17 as run
 WORKDIR /opt/bin
 COPY --from=build /usr/local/src/toggle/bin/toggle .
-CMD ["/opt/bin/toggle", "server"]
+CMD ["/opt/bin/toggle", "-address", "0.0.0.0:8080", "server"]

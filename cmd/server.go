@@ -20,10 +20,21 @@ import (
 
 type ToggleServer struct{}
 
+// CreateScopeSet adds a new scope set for grouping related scopes
+func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request[togglev1.CreateScopeSetRequest]) (*connect.Response[togglev1.CreateScopeSetResponse], error) {
+	log.Info().Msgf("Request headers: %v", req.Header())
+	res := connect.NewResponse(&togglev1.CreateScopeSetResponse{
+		Info: &togglev1.MessageInfo{Id: "myid"},
+	})
+	return res, nil
+}
+
 // CreateScope adds a new scope to partition the toggles
 func (ts *ToggleServer) CreateScope(ctx context.Context, req *connect.Request[togglev1.CreateScopeRequest]) (*connect.Response[togglev1.CreateScopeResponse], error) {
 	log.Info().Msgf("Request headers: %v", req.Header())
-	res := connect.NewResponse(&togglev1.CreateScopeResponse{})
+	res := connect.NewResponse(&togglev1.CreateScopeResponse{
+		Info: &togglev1.MessageInfo{Id: "myid"},
+	})
 	return res, nil
 }
 
@@ -32,6 +43,7 @@ func NewServerCommand() *cli.Command {
 		Name:    "server",
 		Aliases: []string{"s"},
 		Usage:   "Run the API server",
+		Flags:   []cli.Flag{},
 		Action: func(cCtx *cli.Context) error {
 			log.Info().Msg("Running server")
 
@@ -45,7 +57,7 @@ func NewServerCommand() *cli.Command {
 			mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 			mux.Handle(path, handler)
 			http.ListenAndServe(
-				"0.0.0.0:8080", // WARNING(mlee): This is insecure and only suitable for testing
+				cCtx.String("address"),
 				h2c.NewHandler(mux, &http2.Server{}),
 			)
 			return nil

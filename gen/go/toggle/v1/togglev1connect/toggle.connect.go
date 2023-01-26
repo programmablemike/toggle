@@ -27,6 +27,7 @@ const (
 
 // ToggleServiceClient is a client for the toggle.v1.ToggleService service.
 type ToggleServiceClient interface {
+	CreateScopeSet(context.Context, *connect_go.Request[v1.CreateScopeSetRequest]) (*connect_go.Response[v1.CreateScopeSetResponse], error)
 	CreateScope(context.Context, *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error)
 }
 
@@ -40,6 +41,11 @@ type ToggleServiceClient interface {
 func NewToggleServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) ToggleServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &toggleServiceClient{
+		createScopeSet: connect_go.NewClient[v1.CreateScopeSetRequest, v1.CreateScopeSetResponse](
+			httpClient,
+			baseURL+"/toggle.v1.ToggleService/CreateScopeSet",
+			opts...,
+		),
 		createScope: connect_go.NewClient[v1.CreateScopeRequest, v1.CreateScopeResponse](
 			httpClient,
 			baseURL+"/toggle.v1.ToggleService/CreateScope",
@@ -50,7 +56,13 @@ func NewToggleServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 
 // toggleServiceClient implements ToggleServiceClient.
 type toggleServiceClient struct {
-	createScope *connect_go.Client[v1.CreateScopeRequest, v1.CreateScopeResponse]
+	createScopeSet *connect_go.Client[v1.CreateScopeSetRequest, v1.CreateScopeSetResponse]
+	createScope    *connect_go.Client[v1.CreateScopeRequest, v1.CreateScopeResponse]
+}
+
+// CreateScopeSet calls toggle.v1.ToggleService.CreateScopeSet.
+func (c *toggleServiceClient) CreateScopeSet(ctx context.Context, req *connect_go.Request[v1.CreateScopeSetRequest]) (*connect_go.Response[v1.CreateScopeSetResponse], error) {
+	return c.createScopeSet.CallUnary(ctx, req)
 }
 
 // CreateScope calls toggle.v1.ToggleService.CreateScope.
@@ -60,6 +72,7 @@ func (c *toggleServiceClient) CreateScope(ctx context.Context, req *connect_go.R
 
 // ToggleServiceHandler is an implementation of the toggle.v1.ToggleService service.
 type ToggleServiceHandler interface {
+	CreateScopeSet(context.Context, *connect_go.Request[v1.CreateScopeSetRequest]) (*connect_go.Response[v1.CreateScopeSetResponse], error)
 	CreateScope(context.Context, *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error)
 }
 
@@ -70,6 +83,11 @@ type ToggleServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewToggleServiceHandler(svc ToggleServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
 	mux := http.NewServeMux()
+	mux.Handle("/toggle.v1.ToggleService/CreateScopeSet", connect_go.NewUnaryHandler(
+		"/toggle.v1.ToggleService/CreateScopeSet",
+		svc.CreateScopeSet,
+		opts...,
+	))
 	mux.Handle("/toggle.v1.ToggleService/CreateScope", connect_go.NewUnaryHandler(
 		"/toggle.v1.ToggleService/CreateScope",
 		svc.CreateScope,
@@ -80,6 +98,10 @@ func NewToggleServiceHandler(svc ToggleServiceHandler, opts ...connect_go.Handle
 
 // UnimplementedToggleServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedToggleServiceHandler struct{}
+
+func (UnimplementedToggleServiceHandler) CreateScopeSet(context.Context, *connect_go.Request[v1.CreateScopeSetRequest]) (*connect_go.Response[v1.CreateScopeSetResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("toggle.v1.ToggleService.CreateScopeSet is not implemented"))
+}
 
 func (UnimplementedToggleServiceHandler) CreateScope(context.Context, *connect_go.Request[v1.CreateScopeRequest]) (*connect_go.Response[v1.CreateScopeResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("toggle.v1.ToggleService.CreateScope is not implemented"))

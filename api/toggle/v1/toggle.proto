@@ -5,43 +5,80 @@ package toggle.v1;
 option go_package = "github.com/programmablemike/toggle/gen/go/toggle/v1;togglev1";
 
 service ToggleService {
+    rpc CreateScopeSet(CreateScopeSetRequest) returns (CreateScopeSetResponse) {}
     rpc CreateScope(CreateScopeRequest) returns (CreateScopeResponse) {}
 }
 
+//
 // General use types
-enum ToggleValue {
-    TOGGLE_OFF = 0;
-    TOGGLE_ON = 1;
+//
+message NameInfo {
+    string name = 1;
+    optional string description = 2;
 }
 
 message ScopeSet {
     string id = 1;
-    string toggle_set_id = 2; // Foreign key ID for Toggle Set
-    repeated Scope scopes = 3;
+    optional NameInfo info = 2;
+    string toggle_set_id = 3; // Foreign key ID for Toggle Set
+    repeated Scope scopes = 4;
 }
 
 message Scope {
     string id = 1;
-    string name = 2;
-    optional string description = 3;
+    optional NameInfo info = 2;
     bool required = 4;
     repeated string acceptable_values = 5;
 }
 
 message ToggleSet {
     string id = 1;
-    string scope_set_id = 2; // Foreign key ID for Scope Set
-    repeated Toggle toggles = 3;
+    optional NameInfo info = 2;
+    string scope_set_id = 3; // Foreign key ID for Scope Set
+    repeated Toggle toggles = 4;
+}
+
+enum ToggleValue {
+    TOGGLE_OFF = 0;
+    TOGGLE_ON = 1;
 }
 
 message Toggle {
     string id = 1;
-    string name = 2;
-    optional string description = 3;
-    ToggleValue value = 4;
-    ToggleValue default_value = 5;
+    optional NameInfo info = 2;
+    ToggleValue value = 3;
+    ToggleValue default_value = 4;
 }
 
+message MessageInfo {
+    string id = 1;
+}
+
+//
+// CreateScopeSet
+//
+message CreateScopeSetRequest {
+    MessageInfo info = 1;
+}
+message CreateScopeSetResponse {
+    MessageInfo info = 1;
+}
+
+//
 // CreateScope
-message CreateScopeRequest {}
-message CreateScopeResponse {}
+//
+message CreateScopeRequest {
+    MessageInfo info = 1;
+}
+
+message CreateScopeResponse {
+    MessageInfo info = 1;
+}
+
+//
+// CreateToggleSet
+//
+
+//
+// CreateToggle
+//
