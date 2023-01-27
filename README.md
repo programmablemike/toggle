@@ -100,7 +100,7 @@ erDiagram
     Scope {
         string id
     }
-    ToggleSet ||--|| ScopeSet : matches
+    ScopeSet ||--|{ ToggleSet : matches
     ScopeSet ||--|{ Scope : contains
     ToggleSet ||--|{ Toggle : contains
 ```
