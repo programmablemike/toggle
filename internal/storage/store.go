@@ -2,7 +2,9 @@
 // TODO(mlee): Replace this with real, go-routine safe storage. Preferably something with an external datastore that can be persisted to disk
 package storage
 
-import "sync"
+import (
+	"sync"
+)
 
 // DataStore is a generic in-memory store for protobuf messages
 type DataStore[T any] struct {
@@ -42,8 +44,8 @@ func (ds *DataStore[T]) ListAsRef() []*T {
 	items := ds.List()
 	// Pre-allocate the pointer list
 	result := make([]*T, len(items))
-	for idx, item := range items {
-		result[idx] = &item
+	for i := 0; i < len(items); i++ {
+		result[i] = &items[i]
 	}
 	return result
 }

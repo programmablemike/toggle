@@ -30,7 +30,7 @@ func TestAdd(t *testing.T) {
 	ds.Add(TestItem{Id: 3, Value: "salutations sun"})
 }
 
-func benchmarkAdd(ds DataStore[TestItem], size int) {
+func benchmarkAdd(ds *DataStore[TestItem], size int) {
 	for i := 0; i < size; i++ {
 		ds.Add(TestItem{Id: i, Value: "hello world"})
 	}
@@ -40,10 +40,10 @@ func BenchmarkAdd(b *testing.B) {
 	b.ReportAllocs()
 
 	for _, v := range sizes {
-		var ds DataStore[TestItem]
+		ds := DataStore[TestItem]{}
 		b.Run(fmt.Sprintf("count_%d", v.count), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				benchmarkAdd(ds, v.count)
+				benchmarkAdd(&ds, v.count)
 
 			}
 		})
@@ -58,7 +58,7 @@ func TestAddRef(t *testing.T) {
 	ds.AddRef(&TestItem{Id: 3, Value: "salutations sun"})
 }
 
-func benchmarkAddRef(ds DataStore[TestItem], size int) {
+func benchmarkAddRef(ds *DataStore[TestItem], size int) {
 	for i := 0; i < size; i++ {
 		ds.AddRef(&TestItem{Id: i, Value: "hello world"})
 	}
@@ -68,10 +68,10 @@ func BenchmarkAddRef(b *testing.B) {
 	b.ReportAllocs()
 
 	for _, v := range sizes {
-		var ds DataStore[TestItem]
+		ds := DataStore[TestItem]{}
 		b.Run(fmt.Sprintf("count_%d", v.count), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				benchmarkAddRef(ds, v.count)
+				benchmarkAddRef(&ds, v.count)
 			}
 		})
 		ds.Clear()
