@@ -2,7 +2,9 @@ package storage
 
 import (
 	"fmt"
+	"sync"
 	"testing"
+	"time"
 
 	"gotest.tools/v3/assert"
 )
@@ -150,6 +152,7 @@ func TestListAsRef(t *testing.T) {
 		},
 	}
 	res := ds.ListAsRef()
+	fmt.Printf("%v", *res[0])
 	assert.Equal(t, (*res[0]).Id, 1)
 	assert.Equal(t, (*res[0]).Value, "hello world")
 	assert.Equal(t, (*res[1]).Id, 2)
@@ -164,6 +167,41 @@ func TestListAsRef(t *testing.T) {
 }
 
 // NOTE(mlee): This is expected to fail
+// TestGoroutineSafeUpdates runs a search over a large DataStore while simultaneously clearing it
+// Ideally this will not fail if proper mutex locking is used during update operations
 func TestGoroutineSafeUpdates(t *testing.T) {
+	var ds DataStore[TestItem]
+	for i := 0; i < 1000000; i++ {
+		// Set the item with Id=500000 to be different so we have something to search for
+		if i == 500000 {
+			ds.Add(TestItem{Id: i, Value: "it"})
+		} else {
+			ds.Add(TestItem{Id: i, Value: "not it"})
+		}
+	}
 
+	cmp := func(toCheck TestItem) bool {
+		if toCheck.Id == 1 {
+			// Pause on the first item to give the clear() call time to run
+			time.Sleep(1 * time.Second)
+		}
+		if toCheck.Value == "it" {
+			return true
+		}
+		return false
+	}
+
+	// Read and check the result set
+	// Concurrently clear the array
+	var wg sync.WaitGroup
+	go func() {
+		wg.Add(1)
+		ds.Clear()
+		wg.Done()
+	}()
+	res := ds.FindAll(cmp)
+	wg.Wait()
+	assert.Equal(t, len(res), 1)
+	assert.Equal(t, res[0].Id, 500000)
+	assert.Equal(t, res[0].Value, "it")
 }
