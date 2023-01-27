@@ -38,7 +38,7 @@ func NewClientCommand() *cli.Command {
 				Name:  "create-scope-set",
 				Usage: "Create a new scope set",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("Calling `CreateScopeSets`")
+					log.Info().Msg("calling `CreateScopeSets`")
 
 					client := CreateToggleClient(cCtx)
 					res, err := client.CreateScopeSet(
@@ -54,7 +54,7 @@ func NewClientCommand() *cli.Command {
 						log.Error().Err(err)
 						return err
 					}
-					log.Info().Msgf("Received response: %v", res)
+					log.Info().Msgf("received response: %v", res)
 					return nil
 				},
 			},
@@ -62,7 +62,7 @@ func NewClientCommand() *cli.Command {
 				Name:  "list-scope-sets",
 				Usage: "List all available scope sets",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("Calling `ListScopeSets")
+					log.Info().Msg("calling `ListScopeSets")
 
 					client := CreateToggleClient(cCtx)
 					res, err := client.ListScopeSets(
@@ -77,7 +77,7 @@ func NewClientCommand() *cli.Command {
 						log.Error().Err(err)
 						return err
 					}
-					log.Info().Msgf("Received response: %v", res)
+					log.Info().Msgf("received response: %v", res)
 					return nil
 				},
 			},
@@ -85,7 +85,7 @@ func NewClientCommand() *cli.Command {
 				Name:  "list-scopes",
 				Usage: "List all available scopes",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("Calling `ListScopes`")
+					log.Info().Msg("calling `ListScopes`")
 
 					client := CreateToggleClient(cCtx)
 					res, err := client.ListScopes(
@@ -100,7 +100,7 @@ func NewClientCommand() *cli.Command {
 						log.Error().Err(err)
 						return err
 					}
-					log.Info().Msgf("Received response: %v", res)
+					log.Info().Msgf("received response: %v", res)
 					return nil
 				},
 			},

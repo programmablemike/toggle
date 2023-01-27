@@ -34,8 +34,12 @@ type ToggleServer struct {
 
 // CreateScopeSet adds a new scope set for grouping related scopes
 func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request[togglev1.CreateScopeSetRequest]) (*connect.Response[togglev1.CreateScopeSetResponse], error) {
-	log.Info().Msgf("Received request: %v", req)
-	ts.store.scopeset.AddRef(req.Msg.Value)
+	log.Info().Msgf("received request: %v", req)
+	if req.Msg.Value != nil {
+		ts.store.scopeset.AddRef(req.Msg.Value)
+	} else {
+		log.Info().Msg("did not receive a ScopeSet in the request")
+	}
 	res := connect.NewResponse(&togglev1.CreateScopeSetResponse{
 		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 	})
@@ -43,7 +47,7 @@ func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request
 }
 
 func (ts *ToggleServer) ListScopeSets(ctx context.Context, req *connect.Request[togglev1.ListScopeSetsRequest]) (*connect.Response[togglev1.ListScopeSetsResponse], error) {
-	log.Info().Msgf("Received request: %v", req)
+	log.Info().Msgf("received request: %v", req)
 	scopesets := ts.store.scopeset.ListAsRef()
 	res := connect.NewResponse(&togglev1.ListScopeSetsResponse{
 		Info:   &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
@@ -53,7 +57,7 @@ func (ts *ToggleServer) ListScopeSets(ctx context.Context, req *connect.Request[
 }
 
 func (ts *ToggleServer) ListScopes(ctx context.Context, req *connect.Request[togglev1.ListScopesRequest]) (*connect.Response[togglev1.ListScopesResponse], error) {
-	log.Info().Msgf("Received request: %v", req)
+	log.Info().Msgf("received request: %v", req)
 	scopes := ts.store.scope.ListAsRef()
 	res := connect.NewResponse(&togglev1.ListScopesResponse{
 		Info:   &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
@@ -78,7 +82,7 @@ func NewServerCommand() *cli.Command {
 		Usage:   "Run the API server",
 		Flags:   []cli.Flag{},
 		Action: func(cCtx *cli.Context) error {
-			log.Info().Msg("Running server")
+			log.Info().Msg("running server 🚀")
 
 			toggler := &ToggleServer{
 				store: NewToggleStorage(),
