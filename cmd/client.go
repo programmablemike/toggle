@@ -37,8 +37,15 @@ func NewClientCommand() *cli.Command {
 			{
 				Name:  "create-scope-set",
 				Usage: "Create a new scope set",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "name",
+						Value:    "my-scope-set",
+						Required: false,
+					},
+				},
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("calling `CreateScopeSets`")
+					log.Info().Msg("calling `CreateScopeSet`")
 
 					client := CreateToggleClient(cCtx)
 					res, err := client.CreateScopeSet(
@@ -54,20 +61,83 @@ func NewClientCommand() *cli.Command {
 						log.Error().Err(err)
 						return err
 					}
-					log.Info().Msgf("received response: %v", res)
+					log.Info().Msgf("received response: %v", res.Msg)
 					return nil
 				},
 			},
 			{
-				Name:  "list-scope-sets",
+				Name:  "create-scope",
+				Usage: "Create a new scope",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "scope-set-id",
+						Required: true,
+					},
+					&cli.BoolFlag{
+						Name:     "required",
+						Value:    false,
+						Required: false,
+					},
+					&cli.StringFlag{
+						Name:     "name",
+						Required: true,
+					},
+					&cli.StringFlag{
+						Name:     "description",
+						Required: false,
+					},
+					&cli.StringSliceFlag{
+						Name:     "value",
+						Required: true,
+					},
+				},
+				Action: func(cCtx *cli.Context) error {
+					log.Info().Msg("calling `CreateScope`")
+
+					scope_set_id := cCtx.String("scope-set-id")
+					name := cCtx.String("name")
+					desc := cCtx.String("description")
+					req := cCtx.Bool("required")
+					values := cCtx.StringSlice("values")
+
+					client := CreateToggleClient(cCtx)
+					res, err := client.CreateScope(
+						context.Background(), // TODO(mlee): Add a timeout to the context
+						connect.NewRequest(&togglev1.CreateScopeRequest{
+							Info: &togglev1.MessageInfo{
+								Id: fmt.Sprintf("%s", uuid.NewV4()),
+							},
+							Value: &togglev1.Scope{
+								Info: &togglev1.NameInfo{
+									Name:        name,
+									Description: &desc,
+								},
+								ScopeSetId:       scope_set_id,
+								Required:         req,
+								AcceptableValues: values,
+							},
+						}),
+					)
+
+					if err != nil {
+						log.Error().Err(err)
+						return err
+					}
+					log.Info().Msgf("received response: %v", res.Msg)
+					return nil
+
+				},
+			},
+			{
+				Name:  "list-scope-set",
 				Usage: "List all available scope sets",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("calling `ListScopeSets")
+					log.Info().Msg("calling `ListScopeSet")
 
 					client := CreateToggleClient(cCtx)
-					res, err := client.ListScopeSets(
+					res, err := client.ListScopeSet(
 						context.Background(), //TODO(mlee): Add a timeout to the context
-						connect.NewRequest(&togglev1.ListScopeSetsRequest{
+						connect.NewRequest(&togglev1.ListScopeSetRequest{
 							Info: &togglev1.MessageInfo{
 								Id: fmt.Sprintf("%s", uuid.NewV4()),
 							},
@@ -77,20 +147,20 @@ func NewClientCommand() *cli.Command {
 						log.Error().Err(err)
 						return err
 					}
-					log.Info().Msgf("received response: %v", res)
+					log.Info().Msgf("received response: %v", res.Msg)
 					return nil
 				},
 			},
 			{
-				Name:  "list-scopes",
+				Name:  "list-scope",
 				Usage: "List all available scopes",
 				Action: func(cCtx *cli.Context) error {
-					log.Info().Msg("calling `ListScopes`")
+					log.Info().Msg("calling `ListScope`")
 
 					client := CreateToggleClient(cCtx)
-					res, err := client.ListScopes(
+					res, err := client.ListScope(
 						context.Background(), // TODO(mlee): Add a timeout to the context
-						connect.NewRequest(&togglev1.ListScopesRequest{
+						connect.NewRequest(&togglev1.ListScopeRequest{
 							Info: &togglev1.MessageInfo{
 								Id: fmt.Sprintf("%s", uuid.NewV4()),
 							},
@@ -100,7 +170,7 @@ func NewClientCommand() *cli.Command {
 						log.Error().Err(err)
 						return err
 					}
-					log.Info().Msgf("received response: %v", res)
+					log.Info().Msgf("received response: %v", res.Msg)
 					return nil
 				},
 			},

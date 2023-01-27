@@ -200,6 +200,56 @@ Common scoping strategies supported include:
 
 ### list all flags
 
+## CLI usage
+
+### Setup basic customer feature toggles
+
+```bash
+# Create a Scope Set
+> toggle create-scope-set \
+    --name 'PerCustomer' \
+    --desc 'Toggle values on a per customer basis for smooth feature rollout' \
+ScopeSet{Id: ss-1}
+
+# Create the Scopes and bind them to the Scope Set via its ID
+> toggle create-scope --scope-set-id='ss-1' \
+    --required true \
+    --name 'environment' \
+    --desc 'The runtime environment of the service' \
+    --value 'dev' --value 'staging' --value 'prod'
+Scope{}
+
+> toggle create-scope --scope-set-id='ss-1' \
+    --required false \
+    --name 'customer' \
+    --desc 'The customer the user belongs to' \
+    --value 'Acme' --value 'Globex' --value 'Initech' --value 'Umbrella' --value 'Hooli'
+Scope{}
+
+# Create a new Toggle Set
+> toggle create-toggle-set \
+    --name 'Experimental' \
+    --desc 'Toggles for experimental features'
+ToggleSet{Id: ts-1}
+
+# Bind some Toggles to the Toggle Set via its ID
+> toggle create-toggle --toggle-set-id='ts-1' \
+    --name 'new_dashboard' \
+    --desc 'The new dashboard experience' \
+    --default 'OFF'
+
+> toggle create-toggle --toggle-set-id='ts-1' \
+    --name 'feature_x' \
+    --desc 'Secret Feature X' \
+    --default 'OFF'
+```
+
+### Updating toggles
+
+```bash
+> toggle set-toggle --scope environment=prod --scope customer=Acme --name feature_x --value 'ON'
+```
+
 ## features to support
 
 -   [ ] Docker image creation and publishing

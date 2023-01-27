@@ -32,6 +32,20 @@ type ToggleServer struct {
 	store *ToggleStorage
 }
 
+// CreateScope adds a new scope
+func (ts *ToggleServer) CreateScope(ctx context.Context, req *connect.Request[togglev1.CreateScopeRequest]) (*connect.Response[togglev1.CreateScopeResponse], error) {
+	log.Info().Msgf("received request: %v", req)
+	if req.Msg.Value != nil {
+		ts.store.scope.AddRef(req.Msg.Value)
+	} else {
+		log.Info().Msg("did not receive a Scope in the request")
+	}
+	res := connect.NewResponse(&togglev1.CreateScopeResponse{
+		Info: &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
+	})
+	return res, nil
+}
+
 // CreateScopeSet adds a new scope set for grouping related scopes
 func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request[togglev1.CreateScopeSetRequest]) (*connect.Response[togglev1.CreateScopeSetResponse], error) {
 	log.Info().Msgf("received request: %v", req)
@@ -46,20 +60,20 @@ func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request
 	return res, nil
 }
 
-func (ts *ToggleServer) ListScopeSets(ctx context.Context, req *connect.Request[togglev1.ListScopeSetsRequest]) (*connect.Response[togglev1.ListScopeSetsResponse], error) {
+func (ts *ToggleServer) ListScopeSet(ctx context.Context, req *connect.Request[togglev1.ListScopeSetRequest]) (*connect.Response[togglev1.ListScopeSetResponse], error) {
 	log.Info().Msgf("received request: %v", req)
 	scopesets := ts.store.scopeset.ListAsRef()
-	res := connect.NewResponse(&togglev1.ListScopeSetsResponse{
+	res := connect.NewResponse(&togglev1.ListScopeSetResponse{
 		Info:   &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 		Result: scopesets,
 	})
 	return res, nil
 }
 
-func (ts *ToggleServer) ListScopes(ctx context.Context, req *connect.Request[togglev1.ListScopesRequest]) (*connect.Response[togglev1.ListScopesResponse], error) {
+func (ts *ToggleServer) ListScope(ctx context.Context, req *connect.Request[togglev1.ListScopeRequest]) (*connect.Response[togglev1.ListScopeResponse], error) {
 	log.Info().Msgf("received request: %v", req)
 	scopes := ts.store.scope.ListAsRef()
-	res := connect.NewResponse(&togglev1.ListScopesResponse{
+	res := connect.NewResponse(&togglev1.ListScopeResponse{
 		Info:   &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 		Result: scopes,
 	})

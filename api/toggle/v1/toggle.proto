@@ -5,9 +5,10 @@ package toggle.v1;
 option go_package = "github.com/programmablemike/toggle/gen/go/toggle/v1;togglev1";
 
 service ToggleService {
+    rpc CreateScope(CreateScopeRequest) returns (CreateScopeResponse) {}
+    rpc ListScope(ListScopeRequest) returns (ListScopeResponse) {}
     rpc CreateScopeSet(CreateScopeSetRequest) returns (CreateScopeSetResponse) {}
-    rpc ListScopeSets(ListScopeSetsRequest) returns (ListScopeSetsResponse) {}
-    rpc ListScopes(ListScopesRequest) returns (ListScopesResponse) {}
+    rpc ListScopeSet(ListScopeSetRequest) returns (ListScopeSetResponse) {}
 }
 
 //
@@ -22,12 +23,12 @@ message ScopeSet {
     string id = 1;
     optional NameInfo info = 2;
     string toggle_set_id = 3; // Foreign key ID for Toggle Set
-    repeated Scope scopes = 4;
 }
 
 message Scope {
     string id = 1;
-    optional NameInfo info = 2;
+    string scope_set_id = 2;
+    optional NameInfo info = 3;
     bool required = 4;
     repeated string acceptable_values = 5;
 }
@@ -36,7 +37,6 @@ message ToggleSet {
     string id = 1;
     optional NameInfo info = 2;
     string scope_set_id = 3; // Foreign key ID for Scope Set
-    repeated Toggle toggles = 4;
 }
 
 enum ToggleValue {
@@ -46,13 +46,27 @@ enum ToggleValue {
 
 message Toggle {
     string id = 1;
-    optional NameInfo info = 2;
-    ToggleValue value = 3;
-    ToggleValue default_value = 4;
+    string toggle_set_id = 2;
+    optional NameInfo info = 3;
+    ToggleValue value = 4;
+    ToggleValue default_value = 5;
 }
 
 message MessageInfo {
     string id = 1;
+}
+
+//
+// CreateScope
+//
+message CreateScopeRequest {
+    MessageInfo info = 1;
+    Scope value = 2;
+}
+
+message CreateScopeResponse {
+    MessageInfo info = 1;
+    Scope value = 2;
 }
 
 //
@@ -70,11 +84,11 @@ message CreateScopeSetResponse {
 //
 // ListScopeSets
 //
-message ListScopeSetsRequest {
+message ListScopeSetRequest {
     MessageInfo info = 1;
 }
 
-message ListScopeSetsResponse {
+message ListScopeSetResponse {
     MessageInfo info = 1;
     repeated ScopeSet result = 2;
 }
@@ -82,11 +96,11 @@ message ListScopeSetsResponse {
 //
 // ListScopes
 //
-message ListScopesRequest {
+message ListScopeRequest {
     MessageInfo info = 1;
 }
 
-message ListScopesResponse {
+message ListScopeResponse {
     MessageInfo info = 1;
     repeated Scope result = 2;
 }
