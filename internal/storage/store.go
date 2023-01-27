@@ -2,33 +2,35 @@
 // TODO(mlee): Replace this with real, go-routine safe storage. Preferably something with an external datastore that can be persisted to disk
 package storage
 
+import "sync"
+
 // DataStore is a generic in-memory store for protobuf messages
 type DataStore[T any] struct {
 	items []T
-	//m     sync.Mutex
+	m     sync.Mutex
 }
 
 type Comparator[T any] func(value T) bool
 
 // Add a new item to DataStore
 func (ds *DataStore[T]) Add(item T) {
-	//ds.m.Lock()
+	ds.m.Lock()
+	defer ds.m.Unlock()
 	ds.items = append(ds.items, item)
-	//ds.m.Unlock()
 }
 
 func (ds *DataStore[T]) AddRef(item *T) {
-	//ds.m.Lock()
+	ds.m.Lock()
+	defer ds.m.Unlock()
 	ds.items = append(ds.items, *item)
-	//ds.m.Unlock()
 }
 
 // List copies all the items in ds.items into a new slice and returns it
 func (ds *DataStore[T]) List() []T {
-	//ds.m.Lock()
+	ds.m.Lock()
+	defer ds.m.Unlock()
 	result := make([]T, len(ds.items))
 	copy(result, ds.items)
-	//ds.m.Unlock()
 	return result
 }
 
@@ -47,33 +49,33 @@ func (ds *DataStore[T]) ListAsRef() []*T {
 
 // FindOne value that matches a comparator
 func (ds *DataStore[T]) FindOne(cmp Comparator[T]) T {
+	ds.m.Lock()
+	defer ds.m.Unlock()
 	var result T
-	//ds.m.Lock()
 	for _, item := range ds.items {
 		if cmp(item) {
 			result = item
 		}
 	}
-	//ds.m.Unlock()
 	return result
 }
 
 // FindAll values that match a comparator
 func (ds *DataStore[T]) FindAll(cmp Comparator[T]) []T {
+	ds.m.Lock()
+	defer ds.m.Unlock()
 	var results []T
-	//ds.m.Lock()
 	for _, item := range ds.items {
 		if cmp(item) {
 			results = append(results, item)
 		}
 	}
-	//ds.m.Unlock()
 	return results
 }
 
 // Clear the datastore
 func (ds *DataStore[T]) Clear() {
-	//ds.m.Lock()
+	ds.m.Lock()
+	defer ds.m.Unlock()
 	ds.items = []T{}
-	//ds.m.Unlock()
 }

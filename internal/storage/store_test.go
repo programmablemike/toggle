@@ -194,12 +194,19 @@ func TestGoroutineSafeUpdates(t *testing.T) {
 	// Read and check the result set
 	// Concurrently clear the array
 	var wg sync.WaitGroup
+	output := make(chan []TestItem, 1)
+	go func(out chan []TestItem) {
+		wg.Add(1)
+		defer wg.Done()
+		res := ds.FindAll(cmp)
+		output <- res
+	}(output)
 	go func() {
 		wg.Add(1)
+		defer wg.Done()
 		ds.Clear()
-		wg.Done()
 	}()
-	res := ds.FindAll(cmp)
+	res := <-output
 	wg.Wait()
 	assert.Equal(t, len(res), 1)
 	assert.Equal(t, res[0].Id, 500000)
