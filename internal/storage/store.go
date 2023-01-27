@@ -44,6 +44,7 @@ func (ds *DataStore[T]) ListAsRef() []*T {
 	items := ds.List()
 	// Pre-allocate the pointer list
 	result := make([]*T, len(items))
+	// NOTE(mlee): We can't use the `idx, item := range` format here because taking &item only gives the address _of the iterator_
 	for i := 0; i < len(items); i++ {
 		result[i] = &items[i]
 	}
