@@ -19,6 +19,7 @@ func (ds *DataStore[T]) Add(item T) {
 	ds.items = append(ds.items, item)
 }
 
+// Adds a new item as a pointer by copying the value
 func (ds *DataStore[T]) AddRef(item *T) {
 	ds.m.Lock()
 	defer ds.m.Unlock()
@@ -71,6 +72,13 @@ func (ds *DataStore[T]) FindAll(cmp Comparator[T]) []T {
 		}
 	}
 	return results
+}
+
+// Size tells us how many items are in the DataStore
+func (ds *DataStore[T]) Size() int {
+	ds.m.Lock()
+	defer ds.m.Unlock()
+	return len(ds.items)
 }
 
 // Clear the datastore

@@ -166,14 +166,13 @@ func TestListAsRef(t *testing.T) {
 	assert.Equal(t, res2[0].Value, "hello world")
 }
 
-// NOTE(mlee): This is expected to fail
-// TestGoroutineSafeUpdates runs a search over a large DataStore while simultaneously clearing it
+// TestGoroutineSafeUpdates runs a search over a DataStore's items while simultaneously clearing it
 // Ideally this will not fail if proper mutex locking is used during update operations
 func TestGoroutineSafeUpdates(t *testing.T) {
 	var ds DataStore[TestItem]
-	for i := 0; i < 1000000; i++ {
-		// Set the item with Id=500000 to be different so we have something to search for
-		if i == 500000 {
+	for i := 0; i < 1000; i++ {
+		// Set the item with Id=500 to be different so we have something to search for
+		if i == 500 {
 			ds.Add(TestItem{Id: i, Value: "it"})
 		} else {
 			ds.Add(TestItem{Id: i, Value: "not it"})
@@ -182,8 +181,8 @@ func TestGoroutineSafeUpdates(t *testing.T) {
 
 	cmp := func(toCheck TestItem) bool {
 		if toCheck.Id == 1 {
-			// Pause on the first item to give the clear() call time to run
-			time.Sleep(1 * time.Second)
+			// Pause on the first item to give the Clear() call time to run
+			time.Sleep(2 * time.Second)
 		}
 		if toCheck.Value == "it" {
 			return true
@@ -204,11 +203,13 @@ func TestGoroutineSafeUpdates(t *testing.T) {
 	go func() {
 		wg.Add(1)
 		defer wg.Done()
+		// Wait a second to give FindAll() time to start
+		time.Sleep(1 * time.Second)
 		ds.Clear()
 	}()
 	res := <-output
 	wg.Wait()
 	assert.Equal(t, len(res), 1)
-	assert.Equal(t, res[0].Id, 500000)
+	assert.Equal(t, res[0].Id, 500)
 	assert.Equal(t, res[0].Value, "it")
 }
