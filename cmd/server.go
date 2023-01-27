@@ -60,20 +60,20 @@ func (ts *ToggleServer) CreateScopeSet(ctx context.Context, req *connect.Request
 	return res, nil
 }
 
-func (ts *ToggleServer) ListScopeSet(ctx context.Context, req *connect.Request[togglev1.ListScopeSetRequest]) (*connect.Response[togglev1.ListScopeSetResponse], error) {
+func (ts *ToggleServer) ListScopeSets(ctx context.Context, req *connect.Request[togglev1.ListScopeSetsRequest]) (*connect.Response[togglev1.ListScopeSetsResponse], error) {
 	log.Info().Msgf("received request: %v", req)
 	scopesets := ts.store.scopeset.ListAsRef()
-	res := connect.NewResponse(&togglev1.ListScopeSetResponse{
+	res := connect.NewResponse(&togglev1.ListScopeSetsResponse{
 		Info:   &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 		Result: scopesets,
 	})
 	return res, nil
 }
 
-func (ts *ToggleServer) ListScope(ctx context.Context, req *connect.Request[togglev1.ListScopeRequest]) (*connect.Response[togglev1.ListScopeResponse], error) {
+func (ts *ToggleServer) ListScopes(ctx context.Context, req *connect.Request[togglev1.ListScopesRequest]) (*connect.Response[togglev1.ListScopesResponse], error) {
 	log.Info().Msgf("received request: %v", req)
 	scopes := ts.store.scope.ListAsRef()
-	res := connect.NewResponse(&togglev1.ListScopeResponse{
+	res := connect.NewResponse(&togglev1.ListScopesResponse{
 		Info:   &togglev1.MessageInfo{Id: fmt.Sprintf("%s", uuid.NewV4())},
 		Result: scopes,
 	})

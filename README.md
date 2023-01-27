@@ -100,7 +100,7 @@ erDiagram
     Scope {
         string id
     }
-    ScopeSet ||--|{ ToggleSet : matches
+    ScopeSet ||--|{ ToggleSet : bound to
     ScopeSet ||--|{ Scope : contains
     ToggleSet ||--|{ Toggle : contains
 ```
@@ -227,7 +227,7 @@ Scope{}
 Scope{}
 
 # Create a new Toggle Set
-> toggle create-toggle-set \
+> toggle create-toggle-set --scope-set-id='ss-1' \
     --name 'Experimental' \
     --desc 'Toggles for experimental features'
 ToggleSet{Id: ts-1}
@@ -242,6 +242,18 @@ ToggleSet{Id: ts-1}
     --name 'feature_x' \
     --desc 'Secret Feature X' \
     --default 'OFF'
+```
+
+### Seeing available scopes and toggles
+
+```bash
+> toggle list-scopes
+* PerCustomer/environment - The runtime environment of the service
+* PerCustomer/customer - The customer the user belongs to
+
+> toggle list-toggles
+* Experimental/new_dashboard - The new dashboard experience
+* Experimental/feature_x - Secret Feature X
 ```
 
 ### Updating toggles

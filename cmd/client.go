@@ -129,15 +129,15 @@ func NewClientCommand() *cli.Command {
 				},
 			},
 			{
-				Name:  "list-scope-set",
+				Name:  "list-scope-sets",
 				Usage: "List all available scope sets",
 				Action: func(cCtx *cli.Context) error {
 					log.Info().Msg("calling `ListScopeSet")
 
 					client := CreateToggleClient(cCtx)
-					res, err := client.ListScopeSet(
+					res, err := client.ListScopeSets(
 						context.Background(), //TODO(mlee): Add a timeout to the context
-						connect.NewRequest(&togglev1.ListScopeSetRequest{
+						connect.NewRequest(&togglev1.ListScopeSetsRequest{
 							Info: &togglev1.MessageInfo{
 								Id: fmt.Sprintf("%s", uuid.NewV4()),
 							},
@@ -152,15 +152,15 @@ func NewClientCommand() *cli.Command {
 				},
 			},
 			{
-				Name:  "list-scope",
+				Name:  "list-scopes",
 				Usage: "List all available scopes",
 				Action: func(cCtx *cli.Context) error {
 					log.Info().Msg("calling `ListScope`")
 
 					client := CreateToggleClient(cCtx)
-					res, err := client.ListScope(
+					res, err := client.ListScopes(
 						context.Background(), // TODO(mlee): Add a timeout to the context
-						connect.NewRequest(&togglev1.ListScopeRequest{
+						connect.NewRequest(&togglev1.ListScopesRequest{
 							Info: &togglev1.MessageInfo{
 								Id: fmt.Sprintf("%s", uuid.NewV4()),
 							},
