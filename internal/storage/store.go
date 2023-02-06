@@ -9,7 +9,7 @@ import (
 // DataStore is a generic in-memory store for protobuf messages
 type DataStore[T any] struct {
 	items []T
-	m     sync.Mutex
+	m     sync.RWMutex
 }
 
 type Comparator[T any] func(value T) bool
@@ -30,8 +30,8 @@ func (ds *DataStore[T]) AddRef(item *T) {
 
 // List copies all the items in ds.items into a new slice and returns it
 func (ds *DataStore[T]) List() []T {
-	ds.m.Lock()
-	defer ds.m.Unlock()
+	ds.m.RLock()
+	defer ds.m.RUnlock()
 	result := make([]T, len(ds.items))
 	copy(result, ds.items)
 	return result
@@ -53,8 +53,8 @@ func (ds *DataStore[T]) ListAsRef() []*T {
 
 // FindOne value that matches a comparator
 func (ds *DataStore[T]) FindOne(cmp Comparator[T]) T {
-	ds.m.Lock()
-	defer ds.m.Unlock()
+	ds.m.RLock()
+	defer ds.m.RUnlock()
 	var result T
 	for _, item := range ds.items {
 		if cmp(item) {
@@ -66,8 +66,8 @@ func (ds *DataStore[T]) FindOne(cmp Comparator[T]) T {
 
 // FindAll values that match a comparator
 func (ds *DataStore[T]) FindAll(cmp Comparator[T]) []T {
-	ds.m.Lock()
-	defer ds.m.Unlock()
+	ds.m.RLock()
+	defer ds.m.RUnlock()
 	var results []T
 	for _, item := range ds.items {
 		if cmp(item) {
@@ -79,8 +79,8 @@ func (ds *DataStore[T]) FindAll(cmp Comparator[T]) []T {
 
 // Size tells us how many items are in the DataStore
 func (ds *DataStore[T]) Size() int {
-	ds.m.Lock()
-	defer ds.m.Unlock()
+	ds.m.RLock()
+	defer ds.m.RUnlock()
 	return len(ds.items)
 }
 
