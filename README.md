@@ -212,14 +212,16 @@ Common scoping strategies supported include:
 ScopeSet{Id: ss-1}
 
 # Create the Scopes and bind them to the Scope Set via its ID
-> toggle create-scope --scope-set-id='ss-1' \
+> toggle create-scope \
+    --scope-set-id='ss-1' \
     --required true \
     --name 'environment' \
     --desc 'The runtime environment of the service' \
     --value 'dev' --value 'staging' --value 'prod'
 Scope{}
 
-> toggle create-scope --scope-set-id='ss-1' \
+> toggle create-scope \
+    --scope-set-id='ss-1' \
     --required false \
     --name 'customer' \
     --desc 'The customer the user belongs to' \
@@ -227,18 +229,21 @@ Scope{}
 Scope{}
 
 # Create a new Toggle Set
-> toggle create-toggle-set --scope-set-id='ss-1' \
+> toggle create-toggle-set \
+    --scope-set-id='ss-1' \
     --name 'Experimental' \
     --desc 'Toggles for experimental features'
 ToggleSet{Id: ts-1}
 
 # Bind some Toggles to the Toggle Set via its ID
-> toggle create-toggle --toggle-set-id='ts-1' \
+> toggle create-toggle \
+    --toggle-set-id='ts-1' \
     --name 'new_dashboard' \
     --desc 'The new dashboard experience' \
     --default 'OFF'
 
-> toggle create-toggle --toggle-set-id='ts-1' \
+> toggle create-toggle \
+    --toggle-set-id='ts-1' \
     --name 'feature_x' \
     --desc 'Secret Feature X' \
     --default 'OFF'
@@ -248,18 +253,83 @@ ToggleSet{Id: ts-1}
 
 ```bash
 > toggle list-scopes
-* PerCustomer/environment - The runtime environment of the service
-* PerCustomer/customer - The customer the user belongs to
+
+| Scope Set   | Scope       | Description                            |
+| ----------- | ----------- | -------------------------------------- |
+| PerCustomer | environment | The runtime environment of the service |
+| PerCustomer | customer    | The customer the user belongs to       |
 
 > toggle list-toggles
-* Experimental/new_dashboard - The new dashboard experience
-* Experimental/feature_x - Secret Feature X
+
+| Toggle Set   | Toggle        | Description                  |
+| ------------ | ------------- | ---------------------------- |
+| Experimental | new_dashboard | The new dashboard experience |
+| Experimental | feature_x     | Secret Feature X             |
+
+> toggle list-scope-sets
+
+| Scope Set   | environment | customer |
+| ----------- | ----------- | -------- |
+| PerCustomer | dev         | *        |
+| PerCustomer | dev         | Acme     |
+| PerCustomer | dev         | Globex   |
+| PerCustomer | dev         | Initech  |
+| PerCustomer | dev         | Umbrella |
+| PerCustomer | dev         | Hooli    |
+| PerCustomer | test        | Acme     |
+| PerCustomer | test        | Globex   |
+| PerCustomer | test        | Initech  |
+| PerCustomer | test        | Umbrella |
+| PerCustomer | test        | Hooli    |
+| PerCustomer | staging     | Acme     |
+| PerCustomer | staging     | Globex   |
+| PerCustomer | staging     | Initech  |
+| PerCustomer | staging     | Umbrella |
+| PerCustomer | staging     | Hooli    |
+| PerCustomer | production  | Acme     |
+| PerCustomer | production  | Globex   |
+| PerCustomer | production  | Initech  |
+| PerCustomer | production  | Umbrella |
+| PerCustomer | production  | Hooli    |
+
+> toggle list-scope-ids
+
+| Scope ID                 |
+| ------------------------ |
+| PerCustomer:dev:*        |
+| PerCustomer:dev:Acme     |
+| PerCustomer:dev:Globex   |
+| PerCustomer:dev:Initech  |
+| PerCustomer:dev:Umbrella |
+| PerCustomer:dev:Hooli    |
+
+> toggle list-toggle-ids
+
+| Toggle ID                  |
+| -------------------------- |
+| Experimental:new_dashboard |
+| Experimental:feature_x     |
+
+
+> toggle list-toggle-values
+
+| Scope ID                 | Toggle ID                  | Value |
+| ------------------------ | -------------------------- | ----- |
+| PerCustomer:dev:*        | Experimental:new_dashboard | ON    |
+| PerCustomer:dev:Acme     | Experimental:new_dashboard | ON    |
+| PerCustomer:dev:Globex   | Experimental:new_dashboard | ON    |
+| PerCustomer:dev:Initech  | Experimental:new_dashboard | OFF   |
+| PerCustomer:dev:Umbrella | Experimental:new_dashboard | ON    |
+| PerCustomer:dev:Hooli    | Experimental:new_dashboard | ON    |
 ```
 
 ### Updating toggles
 
 ```bash
-> toggle set-toggle --scope environment=prod --scope customer=Acme --name feature_x --value 'ON'
+> toggle set-toggle-value \
+    --scope-id PerCustomer:dev:Acme \
+    --toggle-id Experimental:new_dashboard \
+    --value ON
 ```
 
 ## features to support

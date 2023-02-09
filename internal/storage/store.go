@@ -6,13 +6,26 @@ import (
 	"sync"
 )
 
+// Defines an interface for our store
+// This is intended to allow me to test out other backends that offer better performance characteristics
+type Store[T any] interface {
+	Add(T)
+	AddRef(*T)
+	List() []T
+	ListAsRef() []*T
+	FindOne(Comparator[T]) T
+	FindAll(Comparator[T]) []T
+	Size() int
+	Clear()
+}
+
+type Comparator[T any] func(value T) bool
+
 // DataStore is a generic in-memory store for protobuf messages
 type DataStore[T any] struct {
 	items []T
 	m     sync.RWMutex
 }
-
-type Comparator[T any] func(value T) bool
 
 // Add a new item to DataStore
 func (ds *DataStore[T]) Add(item T) {

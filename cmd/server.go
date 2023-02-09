@@ -22,10 +22,10 @@ import (
 )
 
 type ToggleStorage struct {
-	toggleset *storage.DataStore[togglev1.ToggleSet]
-	toggle    *storage.DataStore[togglev1.Toggle]
-	scopeset  *storage.DataStore[togglev1.ScopeSet]
-	scope     *storage.DataStore[togglev1.Scope]
+	toggleset storage.Store[togglev1.ToggleSet]
+	toggle    storage.Store[togglev1.Toggle]
+	scopeset  storage.Store[togglev1.ScopeSet]
+	scope     storage.Store[togglev1.Scope]
 }
 
 type ToggleServer struct {
