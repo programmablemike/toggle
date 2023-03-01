@@ -2,6 +2,10 @@
 
 Toggle is a simple feature flagging API
 
+## maturity
+
+THIS PROJECT IS PRE-ALPHA AND SHOULD NOT BE CONSIDERED USABLE AT THIS TIME
+
 ## contributions
 
 Pull requests welcomed. ❤️
